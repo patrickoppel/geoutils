@@ -27,7 +27,7 @@ impl Distance {
 /// DistanceResult is a struct to hold results from Vincenty's inverse formula.
 pub struct DistanceResult {
     pub distance: Distance,
-    _initial_bearing: Option<f64>,
+    pub initial_bearing: Option<f64>,
     _final_bearing: Option<f64>,
     _iterations: i32,
 }
@@ -133,7 +133,7 @@ pub fn vincenty_inverse(
 
     Ok(DistanceResult {
         distance: Distance::from_meters((s * 1000.0).round() / 1000.0),
-        _initial_bearing: if s == 0.0 {
+        initial_bearing: if s == 0.0 {
             None
         } else {
             Some(alpha_1.to_degrees())

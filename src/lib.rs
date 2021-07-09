@@ -13,7 +13,7 @@
 //! let moscow = Location::new(55.751667, 37.617778);
 //! let distance = berlin.distance_to(&moscow).unwrap();
 //!
-//! println!("Distance = {}", distance.meters());
+//! println!("Distance = {}", distance.distance.meters());
 //! ```
 //!
 //! * Get the distance between two points using the [Haversine Formula](https://en.wikipedia.org/wiki/Haversine_formula).
@@ -50,10 +50,11 @@
 //! ```
 //!
 
-#![deny(missing_docs)]
+// #![deny(missing_docs)]
 mod formula;
 
 pub use formula::Distance;
+pub use formula::DistanceResult;
 
 /// Location defines a point using it's latitude and longitude.
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -78,9 +79,9 @@ impl Location {
     /// Find the distance from itself to another point. Internally uses Vincenty's inverse formula.
     /// For better performance and lesser accuracy, consider [haversine_distance_to](struct.Location.html#method.haversine_distance_to).
     /// This method returns Err if the formula fails to converge within 100 iterations.
-    pub fn distance_to(&self, to: &Location) -> Result<Distance, String> {
+    pub fn distance_to(&self, to: &Location) -> Result<DistanceResult, String> {
         match formula::vincenty_inverse(self, to, 0.00001, 0.0) {
-            Ok(res) => Ok(res.distance),
+            Ok(res) => Ok(res),
             Err(e) => Err(e),
         }
     }
@@ -117,7 +118,7 @@ mod tests {
 
         match l1.distance_to(&l2) {
             Ok(distance) => {
-                assert_eq!(distance.meters(), 56.409);
+                assert_eq!(distance.distance.meters(), 56.409);
             }
             Err(e) => panic!("Failed: {:?}", e),
         }
